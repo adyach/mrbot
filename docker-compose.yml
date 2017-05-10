@@ -1,0 +1,38 @@
+version: '2'
+services:
+  mrbot:
+    build:
+      context: ./messenger
+    volumes:
+      - /tmp
+    environment:
+      - PAGE_ACCESS_TOKEN=${PAGE_ACCESS_TOKEN}
+  
+  nginx:
+    build:
+      context: ./nginx
+    links:
+     - mrbot
+     - door-service
+    ports:
+     - "80:80"
+     - "443:443"
+    volumes_from:
+     - mrbot
+    volumes:
+     - /etc/letsencrypt:/etc/letsencrypt
+     - /etc/ssl/certs:/etc/ssl/certs
+
+  door-service:
+    build:
+      context: ./door-service
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://door-service-mongo/test
+    links:
+     - door-service-mongo
+     - mrbot
+
+  door-service-mongo:
+    image: mongo:3.4.3
+    volumes:
+     - /data/db

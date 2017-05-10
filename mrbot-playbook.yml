@@ -1,0 +1,8 @@
+---
+- hosts: digital_ocean
+    tasks:
+    - name: Install let
+	  apt: pkg=git state=installed update_cache=true
+      shell: sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+	  sudo git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
+	  sudo /opt/letsencrypt/letsencrypt-auto certonly --standalone --email your.web.site -d your.web.site -d your.web.site
