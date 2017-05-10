@@ -5,6 +5,9 @@ jdk:
 - openjdk8
 services:
 - docker
+
+install:
+  - ./door-service/gradlew compileJava assemble
   
 env:
   global:
@@ -18,8 +21,6 @@ env:
 script: "$JOB"
 
 after_success:
-- ./door-service/gradlew build
-- ls -l ./door-service
 - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 - export REPO=adyach/mrbot-door-service
 - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH
