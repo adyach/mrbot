@@ -1,0 +1,25 @@
+sudo: required
+
+jdk:
+- openjdk8
+
+services:
+- docker
+
+env:
+  global:
+  - COMMIT=${TRAVIS_COMMIT::8}
+  - secure: oj16RoBuhRi+6UPzr4dIrPUUFFA9CrG2M+Z5Db6Pn6SrkD2/3CkUYBc9CYH2/w5KtEZUshPllhFxsjUpQPc1psgb7WqQRttHImjhM8SoRhZ073M3shQDT3BjcTUK8eS8JS3Gb6gVm1xPbZlqk6IZqot6b97PC4t6b2Hcqt7rory1QbX+nvvkqbIgK7EUJ1hVdoZEAamLnkxEwuD0ozCNGCwGuEIlFsljRffzbrANqoFT/9gfpBpFVch2ty5LIO2lDjlNO9nQPR02S4F9s/vE9TWiv4wsTZOBNswU7HEBh2MqvyPk2OMi8a1vwDgkScScZYQ/jzqDly1PCUffk/XX3AW0Zdp5PyDY8ReOQQC5ZfXAyEK0qi1e7qV+RrIiYikqv/7EZ95VtVwHwmGgkroPiVNQ6N4WqmXbWjhFSe7VFH852D0FCaWsjH11xkhlI6F2kEn0T+Q2kBTjcN7UsLHxy27dG/TqX6lPeEBTUstF/3yxgIgyNpQ5/mWv6X0kusspshYhJuXkTI/kW4DYU5f4i41KGYw7egR32Tkr/YaSWVnEfiXSwPYoNmRMnluTWyvvtwLgd8BT2xcFSckXJAXB0crsPlyYL9Xy/AvE0r0a+gj642v+DRIOmo1tFdN7xQKZuXsGEMzyZpyHjy6uk/+0nVpxUjgBNvASymHsmbuumRQ=
+  - secure: rjiJAJYHGgEhRMpAFRIPuALW0K2HeDccQpHHb5H6t47oy5U1gPDm1UJX4r6vvIE9if9DcwXZHEwf16sG2RtHiX7LPTLwnz5PLCla741agmy+5U/bh6hYZlVNVGSMtFRHXthxE1ps0A/rtJnKg7ELvC6cJIU5OM0LXmidPww/IfR1c9MYbGzuhrkzV6Hb1t3Me/4ZlS2+Ny8Q4riKXPs76gDQ4Vafk+usMnu1GYR+Y3Lf7WU0D37AuAPGDOelx6eud5Ktc/qHAmcnKH793jrIuTzkCYqFiyRfCp8EKu5nwZSvHSMBDo9+YCnAKa8DlsjAWx2edX6EtXrooMWz/6rrz/zYWvXFIyakokiEzq+TWEneypSg8T6W2mkWLQddtj1evPVrnfZbly0Sud57c8G2BmNC6CiBb3G6Lgyp8UosAtt0dA3s1uLvYRMsm24MO070FHhxG/Ukq7oBOZI/VDVMkxoxtiTWMgKpDKT0OOP63MmTWs/OWRPwpz0ltGIpYDGdqsi56nj4ZUuK4z2R4W4ARAfWUbV2KdYxuZzEpfCTCuxJ7wa4XoR5aVM+43qDS4d6YRD78pq/ZkdhoYGjXUf1yrlCaiEtcl1qqLSiSY9QzS9tD9UhcE6068ztDF46ObfwzZryLrkNnpkH1CpuGJdf/tQt86GxFGYhFtPna6GvXXo=
+  - secure: lrWgSQXQKaQDI1JQP12s8SkgQcu/jerZzDP7HL9l86qD1rkVuMhpYCVhLUAtCEOkO4KlatTOFgnIv8Kauya7r1dYdbheSvzpePa/DBnhS22KC9yEd0k1Y2zEaIy57jOVGpCvjRkepPc9/57tgvMmhAP4kPlIeDSkKip3SrKDI3upIa18QE5uaa89lfc7F2LcJWPsnxcSRKms9DU76ER7DzbxJeeFLThTwPJ9Enl9LRCzqrpPyNnumSMk5rdCKeqnUaDGKk07hhy5wZtEIvA864Y7UisoXh3Eb0sx0EdZUyBv0WeUO0rbjwOk1KHPISlhbGnAjXbbGMOQyaDWyOL66GR/DLAkz6dDf0wOM25yqvx3c2vTqHlGEjg3O+dwVHmo57+gI1xaEV4pBpoFxMzUaXkDFNiY4PUIrmQJidWsts1az4fqMLsQ7duobKe4XE2YAQ3O6nkEl/D5vqG1z9gXue0FDQWczd92/4XSJK1RIQ43DqJzWW+CFxAesUQ7iToV94+k+w34Iq+IRaqTL0ERZGF0qjKp5aJ3Hgi+jX3T9q6xVmsXOusXZPpvMZquWqUzlJ+jv4YKKkNnRAbT4Tyrf1GJECWYoyP4fyTzNc44+PrEf0k51ATZGlj80VmSFI5qvsE8+QDPaI2rnzk5xgcF8wLDyXBdF7qVDj8y38UXAGs=
+
+after_success:
+- ./gradlew build
+- docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+- export REPO=adyach/mrbot-door-service
+- export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH
+  ; fi`
+- docker build -f Dockerfile -t $REPO:$COMMIT .
+- docker tag $REPO:$COMMIT $REPO:$TAG
+- docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+- docker push $REPO
