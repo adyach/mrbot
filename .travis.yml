@@ -7,7 +7,7 @@ services:
 - docker
 
 install:
-  - ./door-service/gradlew assemble
+  - ./door-service/gradlew build
   
 env:
   global:
