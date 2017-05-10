@@ -19,6 +19,8 @@ script: "$JOB"
 
 after_success:
 - pwd
+- ls -l ./door-service
+- ls -l ./door-service/build
 - ls -l ./door-service/build/libs
 - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 - export REPO=adyach/mrbot-door-service
