@@ -25,8 +25,7 @@ services:
      - /etc/ssl/certs:/etc/ssl/certs
 
   door-service:
-    build:
-      context: ./door-service
+    image: adyach/mrbot-door-service:d361f8d9
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://door-service-mongo/test
     links:

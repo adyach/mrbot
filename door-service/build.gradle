@@ -39,6 +39,7 @@ repositories {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-webflux')
 	compile("org.springframework.boot:spring-boot-starter-data-mongodb")
+	compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

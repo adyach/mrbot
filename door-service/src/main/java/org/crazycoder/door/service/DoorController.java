@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,7 +81,7 @@ public class DoorController {
 
     @GetMapping("/home/security/door/statuses")
     public ResponseEntity<List<DoorStatusView>> getDoorStatuses(@RequestParam(value = "limit", required = false, defaultValue = "5") int limit) {
-        return ResponseEntity.ok(doorStatusRepository.findAllOrderByTimestampDesc().stream()
+        return ResponseEntity.ok(doorStatusRepository.findAllByOrderByTimestampDesc().stream()
                 .map(this::createDoorStatus)
                 .limit(limit)
                 .collect(Collectors.toList()));
@@ -89,7 +91,7 @@ public class DoorController {
         DoorStatusView doorStatusView = new DoorStatusView();
         doorStatusView.setDeviceId(doorStatus.getDeviceId());
         doorStatusView.setState(doorStatus.getStatus().toString().toLowerCase());
-        doorStatusView.setTimestamp(doorStatus.getTimestamp());
+        doorStatusView.setTime(Instant.ofEpochMilli(doorStatus.getTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime());
         return doorStatusView;
     }
 }

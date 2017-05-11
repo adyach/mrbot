@@ -1,10 +1,16 @@
 package org.crazycoder.door.service.view;
 
-import java.util.Date;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
 
 public class DoorStatusView {
 
-    private Date timestamp;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime time;
     private String deviceId;
     private String state;
 
@@ -24,18 +30,20 @@ public class DoorStatusView {
         this.state = state;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    public LocalDateTime getTime() {
+        return time;
     }
 
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("DoorStatusView{");
-        sb.append("timestamp=").append(timestamp);
+        sb.append("time=").append(time);
         sb.append(", deviceId='").append(deviceId).append('\'');
         sb.append(", state='").append(state).append('\'');
         sb.append('}');

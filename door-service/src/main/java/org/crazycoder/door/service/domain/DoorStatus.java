@@ -2,8 +2,6 @@ package org.crazycoder.door.service.domain;
 
 import org.springframework.data.annotation.Id;
 
-import java.util.Date;
-
 public class DoorStatus {
 
     public enum Status {
@@ -11,17 +9,17 @@ public class DoorStatus {
     }
     @Id
     private String id;
-    private final Date timestamp;
+    private final long timestamp;
     private final String deviceId;
     private final Status status;
 
     public DoorStatus(String deviceId, Status status) {
-        this.timestamp = new Date();
+        this.timestamp = System.currentTimeMillis();
         this.deviceId = deviceId;
         this.status = status;
     }
 
-    public Date getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
