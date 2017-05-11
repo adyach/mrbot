@@ -19,7 +19,6 @@ script: "$JOB"
 
 after_success:
 - cd door-service
-- pwd
 - ./gradlew build
 - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 - export REPO=adyach/mrbot-door-service

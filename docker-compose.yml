@@ -14,6 +14,7 @@ services:
     links:
      - mrbot
      - door-service
+     - temp-service
     ports:
      - "80:80"
      - "443:443"
@@ -24,8 +25,7 @@ services:
      - /etc/ssl/certs:/etc/ssl/certs
 
   door-service:
-    build:
-      context: ./door-service
+    image: adyach/mrbot-door-service:d361f8d9
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://door-service-mongo/test
     links:
@@ -36,3 +36,9 @@ services:
     image: mongo:3.4.3
     volumes:
      - /data/db
+
+  temp-service:
+    build:
+      context: ./temp-service
+    links:
+     - mrbot

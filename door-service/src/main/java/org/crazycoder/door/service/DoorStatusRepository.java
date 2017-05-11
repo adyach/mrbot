@@ -8,4 +8,6 @@ import java.util.List;
 public interface DoorStatusRepository extends MongoRepository<DoorStatus, String> {
 
     public List<DoorStatus> findByDeviceIdOrderByTimestampDesc(String deviceId);
+
+    public List<DoorStatus> findAllOrderByTimestampDesc();
 }
