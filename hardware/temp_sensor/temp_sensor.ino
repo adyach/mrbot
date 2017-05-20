@@ -14,7 +14,7 @@ float humidity, temperature, heatIndex;
 char str_humidity[10], str_temperature[10], str_heatIndex[10];
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
  
   getDHTData();
   connectWifi();
@@ -39,7 +39,8 @@ void getDHTData() {
   float humidity = dht.readHumidity();
   float temperature = dht.readTemperature();
   if (isnan(humidity) || isnan(temperature)) {
-    Serial.println("Failed to read from DHT sensor!");
+    Serial.println("Failed to read from DHT sensor! restarting device");
+    ESP.restart();
   }
   float heatIndex = dht.computeHeatIndex(temperature, humidity, false);
 
@@ -51,9 +52,15 @@ void getDHTData() {
 
 void connectWifi() {
   WiFi.begin(ssid, password);
+  int wifiConnectAttempts = 0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    if (wifiConnectAttempts > 20) {
+      Serial.print("Made 10 attemots, restarting device");
+      ESP.restart();
+    }
+    wifiConnectAttempts++;
   }
   Serial.println("");
   Serial.println("WiFi connected");

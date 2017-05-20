@@ -38,9 +38,15 @@ void loop()
 
 void connectWifi() {
   WiFi.begin(ssid, password);
+  int wifiConnectAttempts = 0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    if (wifiConnectAttempts > 20) {
+      Serial.print("Made 10 attemots, restarting device");
+      ESP.restart();
+    }
+    wifiConnectAttempts++;
   }
   Serial.println("");
   Serial.println("WiFi connected");

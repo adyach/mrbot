@@ -31,10 +31,11 @@ def webhook():
                         if "door" in message_text:
                             response = requests.get("http://door-service:8080/home/" + message_text)
                         if "weather" in message_text:
-                            response = requests.get("http://temp-service:8080/home/" + message_text)
+                            response = requests.get("http://temp-service:8081/home/" + message_text)
 
-                        if response and response.status_code == requests.codes.ok:
-                            send_message(sender_id, response.text)
+                        if response:
+                            if response.status_code == requests.codes.ok:
+                                send_message(sender_id, response.text)
                         else:
                             send_message(sender_id, "clarify")
     return "ok", 200
