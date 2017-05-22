@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_package = "org.crazycoder.door.service.protobuf";
+option java_multiple_files = true;
+
+message DoorSensorData {
+    string deviceId = 1;
+    int64 timestamp = 2;
+    Status status = 3;
+}
+
+enum Status {
+    OPENED = 0;
+    CLOSED = 1;
+}

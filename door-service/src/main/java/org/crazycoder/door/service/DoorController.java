@@ -4,8 +4,6 @@ import org.crazycoder.door.service.domain.DoorStatus;
 import org.crazycoder.door.service.domain.Heartbeat;
 import org.crazycoder.door.service.view.DoorStatusView;
 import org.crazycoder.door.service.view.HeartbeatView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,24 +21,19 @@ import java.util.stream.Collectors;
 @RestController
 public class DoorController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DoorController.class);
 
     @Autowired
-    private HeartbeatRepository heartbeatRepository;
-    @Autowired
-    private DoorStatusRepository doorStatusRepository;
+    private DoorService doorService;
 
     @PostMapping("/home/security/door/status")
     public ResponseEntity status(@RequestBody DoorStatusView doorStatusView) {
-        LOG.info("Door status {}", doorStatusView);
-        doorStatusRepository.save(new DoorStatus(doorStatusView.getDeviceId(), DoorStatus.Status.valueOf(doorStatusView.getState())));
+        doorService.saveDoorStatus(new DoorStatus(doorStatusView.getDeviceId(), DoorStatus.Status.valueOf(doorStatusView.getState())));
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/home/security/door/heartbeat")
     public ResponseEntity heartbeat(@RequestBody HeartbeatView heartbeatView) {
-        LOG.info("Door status heartbeat {}", heartbeatView);
-        heartbeatRepository.save(new Heartbeat(heartbeatView.getDeviceId()));
+        doorService.saveHeartbeat(new Heartbeat(heartbeatView.getDeviceId()));
         return ResponseEntity.ok().build();
     }
 
@@ -48,18 +41,14 @@ public class DoorController {
     public ResponseEntity<List<HeartbeatView>> getHeartbeat(
             @PathVariable("device_id") String deviceId,
             @RequestParam(value = "limit", required = false, defaultValue = "5") int limit) {
-        return ResponseEntity.ok(heartbeatRepository.findByDeviceIdOrderByTimestampDesc(deviceId).stream()
-                .map(this::createHeartbeatView)
-                .limit(limit)
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok(doorService.getHeartbeat(deviceId, limit).stream()
+                .map(this::createHeartbeatView).collect(Collectors.toList()));
     }
 
     @GetMapping("/home/security/door/heartbeats")
-    public ResponseEntity<List<HeartbeatView>> getHeartbeats(@RequestParam(value = "limit", required = false, defaultValue = "5") final int limit) {
-        return ResponseEntity.ok(heartbeatRepository.findAll().stream()
-                .map(this::createHeartbeatView)
-                .limit(limit)
-                .collect(Collectors.toList()));
+    public ResponseEntity<List<HeartbeatView>> getHeartbeats(@RequestParam(value = "limit", required = false, defaultValue = "5") int limit) {
+        return ResponseEntity.ok(doorService.getHeartbeats(limit).stream()
+                .map(this::createHeartbeatView).collect(Collectors.toList()));
     }
 
     private HeartbeatView createHeartbeatView(Heartbeat heartbeat) {
@@ -72,19 +61,15 @@ public class DoorController {
     @GetMapping("/home/security/door/status/{device_id}")
     public ResponseEntity<List<DoorStatusView>> getDoorStatus(
             @PathVariable("device_id") String deviceId,
-            @RequestParam(value = "limit", required = false, defaultValue = "5") final int limit) {
-        return ResponseEntity.ok(doorStatusRepository.findByDeviceIdOrderByTimestampDesc(deviceId).stream()
-                .map(this::createDoorStatus)
-                .limit(limit)
-                .collect(Collectors.toList()));
+            @RequestParam(value = "limit", required = false, defaultValue = "5") int limit) {
+        return ResponseEntity.ok(doorService.getDoorStatus(deviceId, limit).stream()
+                .map(this::createDoorStatus).collect(Collectors.toList()));
     }
 
     @GetMapping("/home/security/door/statuses")
     public ResponseEntity<List<DoorStatusView>> getDoorStatuses(@RequestParam(value = "limit", required = false, defaultValue = "5") int limit) {
-        return ResponseEntity.ok(doorStatusRepository.findAllByOrderByTimestampDesc().stream()
-                .map(this::createDoorStatus)
-                .limit(limit)
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok(doorService.getDoorStatuses(limit).stream()
+                .map(this::createDoorStatus).collect(Collectors.toList()));
     }
 
     private DoorStatusView createDoorStatus(DoorStatus doorStatus) {

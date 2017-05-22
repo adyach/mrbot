@@ -1,0 +1,8 @@
+spring:
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+door.service:
+  queue: "door.service.state"
+  topic: "door.service"

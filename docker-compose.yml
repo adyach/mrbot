@@ -20,26 +20,33 @@ services:
      - "443:443"
     volumes_from:
      - mrbot
-    volumes:
-     - /etc/letsencrypt:/etc/letsencrypt
-     - /etc/ssl/certs:/etc/ssl/certs
 
   door-service:
     build:
       context: ./door-service
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://door-service-mongo/test
+      RABBITMQ_HOST: rabbitmq
     links:
      - door-service-mongo
      - mrbot
+     - rabbitmq
 
   door-service-mongo:
     image: mongo:3.4.3
     volumes:
      - /data/db
-
+    ports:
+      - "27017:27017"
+	  
   temp-service:
     build:
       context: ./temp-service
     links:
      - mrbot
+
+  rabbitmq:
+    image: rabbitmq:3.6.9-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"

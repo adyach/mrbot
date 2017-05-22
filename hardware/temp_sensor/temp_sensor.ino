@@ -34,7 +34,7 @@ void getDHTData() {
   pinMode(D0, WAKEUP_PULLUP);
 
   dht.begin();
-  delay(2000);
+  delay(3000);
 
   float humidity = dht.readHumidity();
   float temperature = dht.readTemperature();

@@ -28,9 +28,11 @@ services:
     image: adyach/mrbot-door-service:d41cce1
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://door-service-mongo/test
+      RABBITMQ_HOST: rabbitmq
     links:
      - door-service-mongo
      - mrbot
+     - rabbitmq
 
   door-service-mongo:
     image: mongo:3.4.3
@@ -42,3 +44,6 @@ services:
       context: ./temp-service
     links:
      - mrbot
+	 
+  rabbitmq:
+    image: rabbitmq:3.6.9-management-alpine

@@ -10,14 +10,16 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.1'
 	}
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'application'
+apply plugin: 'com.google.protobuf'
 
 mainClassName = 'org.crazycoder.door.service.DoorServiceApplication'
 
@@ -40,6 +42,35 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-webflux')
 	compile("org.springframework.boot:spring-boot-starter-data-mongodb")
 	compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
+	compile("org.springframework.boot:spring-boot-starter-amqp")
+	compile("org.springframework.boot:spring-boot-starter-actuator")
+	compile 'com.google.protobuf:protobuf-java:3.3.0'
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+sourceSets {
+	main {
+		proto {
+			srcDir 'src/main/java/proto'
+		}
+	}
+}
+
+protobuf {
+	generatedFilesBaseDir = "$projectDir/gen"
+	protoc {
+		artifact = 'com.google.protobuf:protoc:3.3.0'
+	}
+}
+
+
+clean {
+	delete protobuf.generatedFilesBaseDir
+}
+
+idea {
+	module {
+		sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java")
+	}
 }
