@@ -4,14 +4,11 @@ import org.springframework.data.annotation.Id;
 
 public class DoorStatus {
 
-    public enum Status {
-        OPENED, CLOSED
-    }
-    @Id
-    private String id;
     private final long timestamp;
     private final String deviceId;
     private final Status status;
+    @Id
+    private String id;
 
     public DoorStatus(String deviceId, Status status) {
         this.timestamp = System.currentTimeMillis();
@@ -40,5 +37,19 @@ public class DoorStatus {
         sb.append(", status=").append(status);
         sb.append('}');
         return sb.toString();
+    }
+
+    public enum Status {
+        OPENED(1), CLOSED(2);
+
+        private final int value;
+
+        Status(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
     }
 }

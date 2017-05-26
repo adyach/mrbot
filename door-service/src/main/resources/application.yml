@@ -1,4 +1,11 @@
 spring:
+  data.mongo:
+    uri: mongodb://localhost/test
+  rabbitmq:
+    username: HhoeUg42
+    password: ****
+    host: localhost
+    port: 5672
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false

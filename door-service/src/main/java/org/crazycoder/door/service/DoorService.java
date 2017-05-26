@@ -36,9 +36,9 @@ public class DoorService {
         DoorSensorData doorSensorData = DoorSensorData.newBuilder()
                 .setDeviceId(doorStatus.getDeviceId())
                 .setTimestamp(doorStatus.getTimestamp())
-                .setStatus(Status.valueOf(doorStatus.getStatus().name()))
+                .setStatus(Status.forNumber(doorStatus.getStatus().getValue()))
                 .build();
-        rabbitTemplate.convertAndSend(doorServiceTopic, doorServiceQueue, doorSensorData);
+        rabbitTemplate.convertAndSend(doorServiceTopic, doorServiceQueue, doorSensorData.toByteArray());
     }
 
     public void saveHeartbeat(Heartbeat heartbeat) {
@@ -69,5 +69,5 @@ public class DoorService {
                 .limit(limit)
                 .collect(Collectors.toList());
     }
-    
+
 }
