@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   messenger:
-    image: adyach/mrbot-messenger:0.2
+    image: adyach/mrbot-messenger:0.3
     volumes:
       - /tmp
     environment:

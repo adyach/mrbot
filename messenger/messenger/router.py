@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import api
+import requests
 
 _LOG = logging.getLogger('mrbot.router')
 _routes = {}

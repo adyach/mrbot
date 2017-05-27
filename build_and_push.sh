@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export REPO=adyach/mrbot-messenger
-export TAG=0.2
+export TAG=0.3
 export PATH_CONFIG=./messenger
 
 docker login
