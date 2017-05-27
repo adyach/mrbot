@@ -1,8 +1,8 @@
 #!/bin/bash
 
-export REPO=adyach/mrbot-messenger
+export REPO=adyach/mrbot-door-service
 export TAG=0.1
-export PATH_CONFIG=./messenger
+export PATH_CONFIG=./door-service
 
 docker login
 docker build -f $PATH_CONFIG/Dockerfile -t $REPO:$TAG $PATH_CONFIG

@@ -26,7 +26,7 @@ services:
      - /etc/ssl/certs:/etc/ssl/certs
 
   door-service:
-    image: adyach/mrbot-door-service:d41cce1
+    image: adyach/mrbot-door-service:0.1
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://door-service-mongo/test
       SPRING_RABBITMQ_HOST: rabbitmq
