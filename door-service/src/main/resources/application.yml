@@ -3,7 +3,7 @@ spring:
     uri: mongodb://localhost/test
   rabbitmq:
     username: HhoeUg42
-    password: ****
+    password: Hyu5&^*j37hjklsdfbhekqDW2332
     host: localhost
     port: 5672
   jackson:
