@@ -11,7 +11,7 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
 
   nginx:
-    image: adyach/mrbot-nginx:0.1
+    image: adyach/mrbot-nginx:0.2
     links:
      - messenger
      - door-service
