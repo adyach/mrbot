@@ -13,14 +13,14 @@ services:
   nginx:
     image: adyach/mrbot-nginx:0.1
     links:
-     - mrbot
+     - messenger
      - door-service
      - temp-service
     ports:
      - "80:80"
      - "443:443"
     volumes_from:
-     - mrbot
+     - messenger
     volumes:
      - /etc/letsencrypt:/etc/letsencrypt
      - /etc/ssl/certs:/etc/ssl/certs
@@ -37,7 +37,7 @@ services:
         condition: service_healthy
     links:
      - door-service-mongo
-     - mrbot
+     - messenger
      - rabbitmq
 
   door-service-mongo:
@@ -50,7 +50,7 @@ services:
   temp-service:
     image: adyach/mrbot-temp-service:0.1
     links:
-     - mrbot
+     - messenger
 
   rabbitmq:
     image: adyach/mrbot-rabbitmq:0.1
