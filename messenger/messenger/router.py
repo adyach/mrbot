@@ -1,8 +1,7 @@
 import json
 import logging
 import os
-
-from messenger import api
+import api
 
 _LOG = logging.getLogger('mrbot.router')
 _routes = {}

@@ -6,6 +6,7 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY messenger/ /usr/src/app/
+COPY protobuf/ /usr/src/app/protobuf
 
 COPY requirements.txt /usr/src/app/
 COPY mrbot.ini /usr/src/app/

@@ -1,6 +1,6 @@
 version: '2.1'
 services:
-  mrbot:
+  messenger:
     build:
       context: ./messenger
     depends_on:
@@ -17,14 +17,14 @@ services:
     build:
       context: ./nginx
     links:
-     - mrbot
+     - messenger
      - door-service
      - temp-service
     ports:
      - "80:80"
      - "443:443"
     volumes_from:
-     - mrbot
+     - messenger
 
   door-service:
     build:
@@ -39,7 +39,7 @@ services:
         condition: service_healthy
     links:
      - door-service-mongo
-     - mrbot
+     - messenger
      - rabbitmq
 
   door-service-mongo:
@@ -53,7 +53,7 @@ services:
     build:
       context: ./temp-service
     links:
-     - mrbot
+     - messenger
 
   rabbitmq:
     build:
