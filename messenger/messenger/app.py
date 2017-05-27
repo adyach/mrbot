@@ -5,9 +5,10 @@ from flask import Flask, request
 import bus
 import router
 
-app = Flask(__name__)
-
+logging.basicConfig(level=getattr(logging, 'INFO', None))
 _LOG = logging.getLogger('mrbot.http')
+
+app = Flask(__name__)
 
 
 @app.route('/', methods=['GET'])

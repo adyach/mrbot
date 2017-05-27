@@ -1,7 +1,8 @@
 from unittest.mock import MagicMock
 
-import messenger.facebook.router as router
+import messenger.router as router
 import messenger.api
+
 
 def test_facebook_message():
     messenger.api = MagicMock()
