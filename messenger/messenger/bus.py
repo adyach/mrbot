@@ -3,6 +3,7 @@ import logging
 import os
 import pika
 import protobuf.door_sensor_data_pb2
+import uwsgidecorators
 
 import router
 
@@ -11,7 +12,9 @@ RABBITMQ_QUEUE = 'door.service.state'
 RABBITMQ_EXCHANGE = 'door.service'
 
 
-def listen_on_door_state():
+@uwsgidecorators.postfork
+@uwsgidecorators.thread
+def start_consume():
     credentials = pika.PlainCredentials(os.getenv('RABBITMQ_USERNAME'), os.getenv('RABBITMQ_PASSWORD'))
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(host=os.getenv('RABBITMQ_HOST'), credentials=credentials))
@@ -31,6 +34,6 @@ def callback(ch, method, properties, body):
     _LOG.info('Received message: %s', body)
     door_sensor_data = protobuf.door_sensor_data_pb2.DoorSensorData()
     door_sensor_data.ParseFromString(body)
-    date = datetime.datetime.fromtimestamp(door_sensor_data.timestamp/1000.0).strftime('%Y-%m-%d %H:%M:%S')
+    date = datetime.datetime.fromtimestamp(door_sensor_data.timestamp / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
     _LOG.info(date)
     router.send_message_to_service_users(router.FRONT_DOOR, 'Door was opened at {}'.format(date))

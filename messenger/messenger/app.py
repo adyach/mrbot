@@ -2,7 +2,6 @@ import logging
 import os
 from flask import Flask, request
 
-import bus
 import router
 
 logging.basicConfig(level=getattr(logging, 'INFO', None))
@@ -30,5 +29,4 @@ def webhook():
 
 if __name__ == '__main__':
     logging.basicConfig(level=getattr(logging, 'INFO', None))
-    bus.listen_on_door_state()
     app.run()
