@@ -61,6 +61,7 @@ def call_func_by(sender_id, message_text):
     if not func:
         _LOG.info('Could not route message: %s', message_text)
         send_message(sender_id, "clarify")
+        return
     response = func()
     if response:
         if response.status_code == requests.codes.ok:
