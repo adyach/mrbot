@@ -13,5 +13,3 @@ COPY mrbot.ini /usr/src/app/
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 CMD uwsgi --ini mrbot.ini
-#RUN export PYTHONPATH=/usr/src/app
-#CMD python3 app.py

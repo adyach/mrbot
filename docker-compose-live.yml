@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   messenger:
-    image: adyach/mrbot-messenger:0.6
+    image: adyach/mrbot-messenger:0.7
     volumes:
       - /tmp
     environment:
@@ -26,7 +26,7 @@ services:
      - /etc/ssl/certs:/etc/ssl/certs
 
   door-service:
-    image: adyach/mrbot-door-service:0.1
+    image: adyach/mrbot-door-service:0.2
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://door-service-mongo/test
       SPRING_RABBITMQ_HOST: rabbitmq

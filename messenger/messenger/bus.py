@@ -34,6 +34,5 @@ def callback(ch, method, properties, body):
     _LOG.info('Received message: %s', body)
     door_sensor_data = protobuf.door_sensor_data_pb2.DoorSensorData()
     door_sensor_data.ParseFromString(body)
-    date = datetime.datetime.fromtimestamp(door_sensor_data.timestamp / 1000.0).strftime('%Y-%m-%d %H:%M:%S')
-    _LOG.info(date)
+    date = datetime.datetime.fromtimestamp(door_sensor_data.timestamp / 1000).strftime('%Y-%m-%d %H:%M:%S')
     router.send_message_to_service_users(router.FRONT_DOOR, 'Door was opened at {}'.format(date))
