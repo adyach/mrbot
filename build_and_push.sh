@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export REPO=adyach/mrbot-door-service
-export TAG=0.2
+export TAG=0.3
 export PATH_CONFIG=./door-service
 
 docker login

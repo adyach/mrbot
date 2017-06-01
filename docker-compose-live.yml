@@ -3,7 +3,8 @@ services:
   messenger:
     image: adyach/mrbot-messenger:0.7
     volumes:
-      - /tmp
+      - /tmp # for uwsgi socket used by nginx
+      - /usr/local/messenger/sgllite:/data/db
     environment:
       PAGE_ACCESS_TOKEN: ${PAGE_ACCESS_TOKEN}
       RABBITMQ_HOST: rabbitmq
@@ -43,7 +44,7 @@ services:
   door-service-mongo:
     image: mongo:3.4.3
     volumes:
-     - /data/db
+     - /usr/local/door-service/mongodb:/data/db
     ports:
       - "27017:27017"
 

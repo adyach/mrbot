@@ -40,7 +40,7 @@ public class DoorStatus {
     }
 
     public enum Status {
-        OPENED(1), CLOSED(2);
+        OPENED(0), CLOSED(1);
 
         private final int value;
 

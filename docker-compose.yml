@@ -7,7 +7,8 @@ services:
       rabbitmq:
         condition: service_healthy
     volumes:
-      - /tmp
+      - /tmp # for uwsgi socket used by nginx
+      - /usr/local/messenger/sgllite:/data/db
     environment:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USERNAME: HhoeUg42
@@ -45,7 +46,7 @@ services:
   door-service-mongo:
     image: mongo:3.4.3
     volumes:
-     - /data/db
+     - /usr/local/door-service/mongodb:/data/db
 
   temp-service:
     build:
