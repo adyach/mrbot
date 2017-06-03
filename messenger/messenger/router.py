@@ -3,11 +3,16 @@ import logging
 import os
 import api
 import requests
+from tinydb.storages import JSONStorage
+from tinydb.middlewares import CachingMiddleware
+from tinydb import TinyDB
+from tinydb import Query
+
+db = TinyDB('/data/db/users.json')
 
 _LOG = logging.getLogger('mrbot.router')
 _routes = {}
 route = lambda f: _routes.setdefault(f.__name__, f)
-_users = {}
 
 FRONT_DOOR = 'front_door'
 WEATHER_BAD_ROOM = 'weather_bed_room'
@@ -40,10 +45,12 @@ def send_message(recipient_id, message_text):
 
 
 def send_message_to_service_users(service, message):
-    _LOG.info('Users: %s', _users)
-    for user, services in _users.items():
-        if services.intersection({service}):
-            send_message(user, message)
+    users = db.search(Query().services.any({service}))
+    if users:
+        for u in users:
+            send_message(u['user_id'], message)
+    else:
+        _LOG.warn('No users found for service: %s', service)
 
 
 @route
@@ -65,11 +72,18 @@ def call_func_by(sender_id, message_text):
     response = func()
     if response:
         if response.status_code == requests.codes.ok:
-            set_user_service(sender_id, func.__name__)
+            subscribe_user_to_service(sender_id, func.__name__)
             send_message(sender_id, response.text)
 
 
-def set_user_service(sender_id, service):
-    if not _users.get(sender_id):
-        _users[sender_id] = set()
-    _users[sender_id].add(service)
+def subscribe_user_to_service(sender_id, service):
+    users = db.search(Query()['user_id'] == sender_id)
+    _LOG.info('User %s services %s and want add %s', sender_id, users, service)
+    if not users:
+        db.insert({'user_id': sender_id, 'services': [service]})
+        return
+    services = users[0]['services']
+    if service not in services:
+        services.append(service)
+        db.update(services, where('user_id') == sender_id)
+        return

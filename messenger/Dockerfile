@@ -3,6 +3,7 @@ FROM python:3.5
 MAINTAINER Andrey Dyachkov
 
 RUN mkdir -p /usr/src/app
+RUN mkdir -p /data/db
 WORKDIR /usr/src/app
 
 COPY messenger/ /usr/src/app/
