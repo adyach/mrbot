@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   messenger:
-    image: adyach/mrbot-messenger:0.7
+    image: adyach/mrbot-messenger:0.8
     volumes:
       - /tmp # for uwsgi socket used by nginx
       - /usr/local/messenger:/data/db
