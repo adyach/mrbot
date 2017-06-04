@@ -1,22 +1,26 @@
 ---
-- hosts: digital_ocean
-    tasks:
-    - name: Update repositories cache and install "git" package
-      apt:
-        name: git
-        update_cache: yes
-    - name: Install "docker" package
-      apt:
-        name: docker
-    - name: Install "docker-compose" package
-      apt:
-        name: docker-compose
-    - name: Install letsencrypt
-      shell: sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 &
-      sudo git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt &
-      sudo /opt/letsencrypt/letsencrypt-auto certonly --standalone --email your.web.site -d your.web.site -d your.web.site
-    - copy:
-        src: .env
-        dest: /home/mrbot
-    - name: Run mrbot
-      shell: cd /home/mrbot & docker-compose up -d
+- hosts: mrbot
+  tasks:
+  - name: Update repositories cache and install "git" package
+    apt:
+      name: git
+      update_cache: yes
+  - name: Install "docker" package
+    apt:
+      name: docker
+  - name: Install "docker-compose" package
+    apt:
+      name: docker-compose
+  - name: Install letsencrypt: Diffie-Hellman
+    shell: sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  - name: Install letsencrypt: clone letsencrypt
+    shell: sudo git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
+  - name: Install letsencrypt: request certificate
+    shell: sudo /opt/letsencrypt/letsencrypt-auto certonly --standalone --email email -d website -d website
+  - copy:
+      src: .env
+      dest: /home/mrbot
+  - name: Clone mrbot
+    shell: cd /home & git clone https://github.com/adyach/mrbot.git
+  - name: Run mrbot
+    shell: cd mrbot & docker-compose -f docker-compose-live.yml up -d
