@@ -50,6 +50,8 @@ services:
 
   temp-service:
     image: adyach/mrbot-temp-service:0.2
+    environment:
+      CASSANDRA_HOST: temp-service-cassandra
     links:
      - messenger
      - temp-service-cassandra
@@ -58,6 +60,9 @@ services:
     image: adyach/mrbot-temp-service-cassandra:3.10
     volumes:
       - /usr/local/temp-service-cassandra:/var/lib/cassandra
+    environment:
+      MAX_HEAP_SIZE: 256M
+      HEAP_NEWSIZE: 100M
 
   rabbitmq:
     image: adyach/mrbot-rabbitmq:0.1

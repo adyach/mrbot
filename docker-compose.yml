@@ -66,7 +66,10 @@ services:
       context: ./temp-service
       dockerfile: Dockerfile.cassandra
     volumes:
-      - /var/lib/cassandrax
+      - /var/lib/cassandra
+    environment:
+      MAX_HEAP_SIZE: 256M
+      HEAP_NEWSIZE: 100M
     # healthcheck:
     #     test: ["CMD", "cqlsh -u cassandra -p cassandra"]
     #     interval: 30s
