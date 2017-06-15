@@ -51,8 +51,27 @@ services:
   temp-service:
     build:
       context: ./temp-service
+    environment:
+      CASSANDRA_HOST: temp-service-cassandra
+    # depends_on:
+    #   temp-service-cassandra:
+    #     condition: service_healthy
     links:
      - messenger
+     - temp-service-cassandra
+
+  temp-service-cassandra:
+    # image: cassandra:3.10
+    build:
+      context: ./temp-service
+      dockerfile: Dockerfile.cassandra
+    volumes:
+      - /var/lib/cassandrax
+    # healthcheck:
+    #     test: ["CMD", "cqlsh -u cassandra -p cassandra"]
+    #     interval: 30s
+    #     timeout: 10s
+    #     retries: 5
 
   rabbitmq:
     build:

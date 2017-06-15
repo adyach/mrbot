@@ -49,9 +49,15 @@ services:
       - "27017:27017"
 
   temp-service:
-    image: adyach/mrbot-temp-service:0.1
+    image: adyach/mrbot-temp-service:0.2
     links:
      - messenger
+     - temp-service-cassandra
+
+  temp-service-cassandra:
+    image: adyach/mrbot-temp-service-cassandra:3.10
+    volumes:
+      - /usr/local/temp-service-cassandra:/var/lib/cassandra
 
   rabbitmq:
     image: adyach/mrbot-rabbitmq:0.1

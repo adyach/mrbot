@@ -1,0 +1,5 @@
+FROM adyach/cassandra-run-cql-scripts:3.10
+
+MAINTAINER Andrey Dyachkov
+
+COPY create.cql docker-entrypoint-initdb.d/

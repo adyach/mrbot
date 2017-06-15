@@ -15,13 +15,12 @@ char str_humidity[10], str_temperature[10], str_heatIndex[10];
 
 void setup() {
   Serial.begin(9600);
- 
+
   getDHTData();
   connectWifi();
   String deviceId = macAddress();
-  post("/home/weather/status", 
-  "{\"deviceId\":\""+deviceId+"\",\"humidity\":"+str_humidity+",\"temperature\":"+str_temperature+",\"heatIndex\":"+str_heatIndex+"}");
-  
+  post("/home/weather/status", "{\"deviceId\":\""+deviceId+"\",\"humidity\":"+str_humidity+",\"temperature\":"+str_temperature+",\"heatIndex\":"+str_heatIndex+"}");
+
   // convert to microseconds
   ESP.deepSleep(sleepSeconds * 1000000);
 }
