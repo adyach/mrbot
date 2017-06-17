@@ -6,21 +6,33 @@
 #define DHTPIN D4
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
-
+#define DHT_PWR_PIN D8
 // sleep for this many seconds
 const int sleepSeconds = 600;
 
 float humidity, temperature, heatIndex;
 char str_humidity[10], str_temperature[10], str_heatIndex[10];
 
+ADC_MODE(ADC_VCC);
+
 void setup() {
   Serial.begin(9600);
 
-  getDHTData();
+  // Connect D0 to RST to wake up
+  pinMode(D0, WAKEUP_PULLUP);
+  pinMode(DHT_PWR_PIN, OUTPUT);
+  digitalWrite(DHT_PWR_PIN, HIGH);
+  delay(2000);
+    
+  fillSensorData();
   connectWifi();
   String deviceId = macAddress();
-  post("/home/weather/status", "{\"deviceId\":\""+deviceId+"\",\"humidity\":"+str_humidity+",\"temperature\":"+str_temperature+",\"heatIndex\":"+str_heatIndex+"}");
+  String vcc = readVcc();
+  post("/home/weather/status", 
+  "{\"deviceId\":\""+deviceId+"\",\"humidity\":"+str_humidity+",\"temperature\":"+str_temperature+",\"heatIndex\":"+str_heatIndex+",\"vcc\":"+vcc+"}");
 
+  digitalWrite(DHT_PWR_PIN, LOW);
+  
   // convert to microseconds
   ESP.deepSleep(sleepSeconds * 1000000);
 }
@@ -28,10 +40,7 @@ void setup() {
 void loop() {
 }
 
-void getDHTData() {
-  // Connect D0 to RST to wake up
-  pinMode(D0, WAKEUP_PULLUP);
-
+void fillSensorData() {
   dht.begin();
   delay(3000);
 
@@ -56,7 +65,7 @@ void connectWifi() {
     delay(500);
     Serial.print(".");
     if (wifiConnectAttempts > 20) {
-      Serial.print("Made 10 attemots, restarting device");
+      Serial.print("Made 10 attempts, restarting device");
       ESP.restart();
     }
     wifiConnectAttempts++;
@@ -88,3 +97,12 @@ String macAddress(void) {
     sprintf(macStr, "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     return String(macStr);
 }
+
+String readVcc(void) {
+    char str[10];
+    uint32_t vcc = ESP.getVcc();
+    sprintf(str, "%u", vcc);
+    return String(str);
+}
+
+

@@ -11,7 +11,15 @@ import (
 	"os"
 )
 
-type WeatherStatus struct {
+type WeatherStatusRequest struct {
+		DeviceId string
+		Humidity float32
+		Temperature float32
+		HeatIndex float32
+		Vcc int32
+}
+
+type WeatherStatusResponse struct {
 		Timestamp string
 		DeviceId string
 		Humidity float32
@@ -51,16 +59,18 @@ func post(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	weatherStatus := WeatherStatus{}
+	weatherStatus := WeatherStatusRequest{}
 	json.Unmarshal(body, &weatherStatus)
+	log.Println("Post: ", weatherStatus)
 
-	if err := session.Query(`INSERT INTO weather (timestamp, device_id, temperature, humidity, heat_index) VALUES (?, ?, ?, ?, ?)`,
+	if err := session.Query(`INSERT INTO weather (timestamp, device_id, temperature, humidity, heat_index, vcc) VALUES (?, ?, ?, ?, ?, ?)`,
 	time.Now().UnixNano(),
 	weatherStatus.DeviceId,
 	weatherStatus.Humidity,
 	weatherStatus.Temperature,
-	weatherStatus.HeatIndex).Exec(); err != nil {
-		log.Println(err)
+	weatherStatus.HeatIndex,
+	weatherStatus.Vcc).Exec(); err != nil {
+		log.Println("Error while inserting weather: ", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -74,13 +84,15 @@ func get(w http.ResponseWriter) {
 	var temperature float32
 	var heat_index float32
 
-	if err := session.Query(`SELECT * FROM weather LIMIT 1`).Consistency(gocql.One).Scan(&device_id, &timestamp, &humidity, &temperature, &heat_index); err != nil {
-		log.Println(err)
+	if err := session.Query(`SELECT timestamp, device_id, temperature, humidity, heat_index FROM weather LIMIT 1`).Consistency(gocql.One).Scan(
+		&timestamp, &device_id, &temperature, &humidity, &heat_index); err != nil {
+		log.Println("Error while quering weather: ", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	weatherStatus := WeatherStatus{Timestamp: time.Unix(0, timestamp).String(), DeviceId: device_id, Temperature: temperature, Humidity: humidity, HeatIndex: heat_index}
+	weatherStatus := WeatherStatusResponse{Timestamp: time.Unix(0, timestamp).String(), DeviceId: device_id, Temperature: temperature, Humidity: humidity, HeatIndex: heat_index}
 	jsonStr, _ := json.Marshal(weatherStatus)
+	log.Println("Get: ", weatherStatus)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)

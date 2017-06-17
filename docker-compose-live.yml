@@ -45,11 +45,9 @@ services:
     image: mongo:3.4.3
     volumes:
      - /usr/local/door-service:/data/db
-    ports:
-      - "27017:27017"
 
   temp-service:
-    image: adyach/mrbot-temp-service:0.2
+    image: adyach/mrbot-temp-service:0.3
     environment:
       CASSANDRA_HOST: temp-service-cassandra
     links:
@@ -66,9 +64,6 @@ services:
 
   rabbitmq:
     image: adyach/mrbot-rabbitmq:0.1
-    ports:
-      - "5672:5672"
-      - "15672:15672"
     healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:15672"]
         interval: 30s
