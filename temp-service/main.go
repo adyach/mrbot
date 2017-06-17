@@ -66,8 +66,8 @@ func post(w http.ResponseWriter, r *http.Request) {
 	if err := session.Query(`INSERT INTO weather (timestamp, device_id, temperature, humidity, heat_index, vcc) VALUES (?, ?, ?, ?, ?, ?)`,
 	time.Now().UnixNano(),
 	weatherStatus.DeviceId,
-	weatherStatus.Humidity,
 	weatherStatus.Temperature,
+	weatherStatus.Humidity,
 	weatherStatus.HeatIndex,
 	weatherStatus.Vcc).Exec(); err != nil {
 		log.Println("Error while inserting weather: ", err)
