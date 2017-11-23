@@ -7,7 +7,7 @@ const int sleepTimeS = 600;
 const int doorPin = 4;
 
 void setup()
-{ 
+{
   // Serial
   Serial.begin(115200);
   Serial.println("ESP8266 in normal mode");

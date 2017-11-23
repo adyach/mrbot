@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"encoding/json"
@@ -6,8 +6,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
+
+	"temp-service/repository"
 
 	"github.com/gocql/gocql"
 )
@@ -28,30 +29,6 @@ type WeatherStatusResponse struct {
 	HeatIndex   float32
 }
 
-var cluster *gocql.ClusterConfig
-var session *gocql.Session
-
-func Service() {
-	cassandraHost, ok := os.LookupEnv("CASSANDRA_HOST")
-	if !ok {
-		cassandraHost = "127.0.0.1"
-	}
-	log.Println("cassandraHost: ", cassandraHost)
-	cluster = gocql.NewCluster(cassandraHost)
-	cluster.Keyspace = "temp_service"
-	cluster.Consistency = gocql.Quorum
-	sess, err := cluster.CreateSession()
-	if err != nil {
-		log.Println("Error while accessing Cassandra: ", err)
-	} else {
-		session = sess
-	}
-}
-
-func Close() {
-	session.Close()
-}
-
 func SaveWeatherStatus(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -63,16 +40,17 @@ func SaveWeatherStatus(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &weatherStatus)
 	log.Println("SaveWeatherStatus: ", weatherStatus)
 
-	if err := session.Query(`INSERT INTO weather (timestamp, device_id, temperature, humidity, heat_index, vcc) VALUES (?, ?, ?, ?, ?, ?)`,
+	if err := repository.Session().Query(`INSERT INTO weather (timestamp, device_id, temperature, humidity, heat_index, vcc) VALUES (?, ?, ?, ?, ?, ?)`,
 		time.Now().UnixNano(),
 		weatherStatus.DeviceId,
 		weatherStatus.Temperature,
 		weatherStatus.Humidity,
 		weatherStatus.HeatIndex,
-		weatherStatus.Vcc).Exec(); err != nil {
-		log.Println("Error while inserting weather: ", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+		weatherStatus.Vcc).Exec();
+		err != nil {
+			log.Println("Error while inserting weather: ", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -84,11 +62,12 @@ func GetLatestWeatherStatus(w http.ResponseWriter) {
 	var temperature float32
 	var heat_index float32
 
-	if err := session.Query(`SELECT timestamp, device_id, temperature, humidity, heat_index FROM weather LIMIT 1`).Consistency(gocql.One).Scan(
-		&timestamp, &device_id, &temperature, &humidity, &heat_index); err != nil {
-		log.Println("Error while quering weather: ", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	if err := repository.Session().Query(`SELECT timestamp, device_id, temperature, humidity, heat_index FROM weather LIMIT 1`).Consistency(gocql.One).Scan(
+		&timestamp, &device_id, &temperature, &humidity, &heat_index);
+		err != nil {
+			log.Println("Error while quering weather: ", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 	}
 	weatherStatus := WeatherStatusResponse{Timestamp: time.Unix(0, timestamp).String(), DeviceId: device_id, Temperature: temperature, Humidity: humidity, HeatIndex: heat_index}
 	jsonStr, _ := json.Marshal(weatherStatus)

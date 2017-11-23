@@ -15,14 +15,14 @@ def verify():
     if request.args.get("hub.mode") == "subscribe" and request.args.get("hub.challenge"):
         if not request.args.get("hub.verify_token") == os.environ["VERIFY_TOKEN"]:
             return "Verification token mismatch", 403
-        _LOG.info('Tokem verifed')
+        _LOG.info('Token verified')
         return request.args["hub.challenge"], 200
     return "ok", 200
 
 
 @app.route('/', methods=['POST'])
 def webhook():
-    _LOG.info('Webhooked touched: %s', request)
+    _LOG.info('Webhook touched: %s', request)
     router.route_message(request.get_json())
     return "ok", 200
 

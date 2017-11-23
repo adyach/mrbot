@@ -1,6 +1,2 @@
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+pkg/
 temp-service
