@@ -7,13 +7,12 @@ import (
 	"log"
 	"time"
 	"encoding/json"
-	"io/ioutil"
-	"io"
+	"strconv"
 )
 
 type WeatherAverageRequest struct {
-	DeviceId string
-	NumberOfDays int64
+	DeviceId     string
+	NumberOfDays int
 }
 
 type WeatherAverageResponse struct {
@@ -24,21 +23,16 @@ type WeatherAverageResponse struct {
 }
 
 func GetWeatherAverage(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 	weatherAverageRequest := WeatherAverageRequest{}
-	json.Unmarshal(body, &weatherAverageRequest)
+	weatherAverageRequest.DeviceId = r.URL.Query().Get("device_name")
+	weatherAverageRequest.NumberOfDays, _ = strconv.Atoi(r.URL.Query().Get("last_days_number"))
 	log.Println("GetWeatherAverage: ", weatherAverageRequest)
 
 	var avgTemperature float32
 	var avgHumidity float32
 	var avgHeatIndex float32
 	var start = time.Now().UnixNano()
-	var end = start - ((1000 ^ 3) * 60 * 60 * 24 * weatherAverageRequest.NumberOfDays)
+	var end = time.Now().AddDate(0, 0, -weatherAverageRequest.NumberOfDays).UnixNano()
 
 	if err := repository.Session().Query(`SELECT avg(temperature), avg(humidity), avg(heat_index) from weather
 												WHERE device_id = ? AND timestamp <= ? AND timestamp >= ?;`, weatherAverageRequest.DeviceId, start, end).

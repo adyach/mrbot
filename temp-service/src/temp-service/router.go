@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 	"temp-service/service"
-
 )
 
 func RouteWeatherStatus(w http.ResponseWriter, r *http.Request) {

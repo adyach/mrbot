@@ -47,7 +47,7 @@ services:
      - /usr/local/door-service:/data/db
 
   temp-service:
-    image: adyach/mrbot-temp-service:0.3
+    image: adyach/mrbot-temp-service:0.4
     environment:
       CASSANDRA_HOST: temp-service-cassandra
     links:

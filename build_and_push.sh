@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export REPO=adyach/mrbot-temp-service
-export TAG=0.3
+export TAG=0.4
 export PATH_CONFIG=./temp-service
 
 docker login
