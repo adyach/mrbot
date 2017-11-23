@@ -1,5 +1,9 @@
-FROM golang:1.8.1-onbuild
+FROM golang:1.9
 
-MAINTAINER Andrey Dyachkov
+WORKDIR /go/src/temp-service
+COPY ./src/temp-service .
 
-RUN go get github.com/gocql/gocql
+RUN go-wrapper download
+RUN go-wrapper install
+
+CMD ["go-wrapper", "run"]
