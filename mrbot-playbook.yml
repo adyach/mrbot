@@ -5,22 +5,39 @@
     apt:
       name: git
       update_cache: yes
-  - name: Install "docker" package
-    apt:
-      name: docker
-  - name: Install "docker-compose" package
-    apt:
-      name: docker-compose
-  - name: Install letsencrypt: Diffie-Hellman
+
+  - name: Install "docker-compose", copying file
+    shell: sudo curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+  - name: Install "docker-compose", chmod for docker-compose
+    shell: sudo chmod +x /usr/local/bin/docker-compose
+
+  - name: Install "docker", add pgp key
+    shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - name: Install "docker", add repo
+    shell: sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - name: Install "docker", update apt-get
+    shell: sudo apt-get update
+  - name: Install "docker", install
+    shell: sudo apt-get install -y docker-ce
+
+  - name: Install letsencrypt, Diffie-Hellman
     shell: sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
-  - name: Install letsencrypt: clone letsencrypt
+  - name: Install letsencrypt, clone letsencrypt
     shell: sudo git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
-  - name: Install letsencrypt: request certificate
-    shell: sudo /opt/letsencrypt/letsencrypt-auto certonly --standalone --email email -d website -d website
+  - name: Install letsencrypt, request certificate
+    shell: sudo /opt/letsencrypt/letsencrypt-auto certonly --agree-tos --standalone --email email -d site
+
+  - name: Create user mrbot
+    shell: useradd mrbot
+  - name: Add mrbot to docker group
+    shell: usermod -aG docker mrbot
+  - name: Switch user to mrbot
+    shell: su - mrbot
+
+  - name: Clone mrbot
+    shell: git clone https://github.com/adyach/mrbot.git /home/mrbot
   - copy:
       src: .env
-      dest: /home/mrbot
-  - name: Clone mrbot
-    shell: cd /home & git clone https://github.com/adyach/mrbot.git
+      dest: /home/mrbot/.env
   - name: Run mrbot
-    shell: cd mrbot & docker-compose -f docker-compose-live.yml up -d
+    shell: docker-compose -f /home/mrbot/docker-compose-live.yml up -d
