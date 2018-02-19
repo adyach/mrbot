@@ -1,4 +1,5 @@
 ---
+- name: Deploy mrbot to remote host
 - hosts: mrbot
   tasks:
   - name: Update repositories cache and install "git" package
