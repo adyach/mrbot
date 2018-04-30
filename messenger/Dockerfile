@@ -10,7 +10,6 @@ COPY messenger/ /usr/src/app/
 COPY protobuf/ /usr/src/app/protobuf
 
 COPY requirements.txt /usr/src/app/
-COPY mrbot.ini /usr/src/app/
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 CMD uwsgi --ini mrbot.ini

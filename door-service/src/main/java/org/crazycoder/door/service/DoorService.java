@@ -32,13 +32,17 @@ public class DoorService {
 
     public void saveDoorStatus(DoorStatus doorStatus) {
         LOG.info("Door status {}", doorStatus);
-        doorStatusRepository.save(doorStatus);
-        DoorSensorData doorSensorData = DoorSensorData.newBuilder()
-                .setDeviceId(doorStatus.getDeviceId())
-                .setTimestamp(doorStatus.getTimestamp())
-                .setStatus(Status.forNumber(doorStatus.getStatus().getValue()))
-                .build();
-        rabbitTemplate.convertAndSend(doorServiceTopic, doorServiceQueue, doorSensorData.toByteArray());
+        DoorStatus result = doorStatusRepository.save(doorStatus);
+        if (result == null) {
+            LOG.error("failed to save door status to database");
+        } else {
+            DoorSensorData doorSensorData = DoorSensorData.newBuilder()
+                    .setDeviceId(doorStatus.getDeviceId())
+                    .setTimestamp(doorStatus.getTimestamp())
+                    .setStatus(Status.forNumber(doorStatus.getStatus().getValue()))
+                    .build();
+            rabbitTemplate.convertAndSend(doorServiceTopic, doorServiceQueue, doorSensorData.toByteArray());
+        }
     }
 
     public void saveHeartbeat(Heartbeat heartbeat) {

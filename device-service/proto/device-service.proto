@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.crazycoder.deviceservice";
+option java_outer_classname = "DeviceServiceProto";
+
+package deviceservice;
+
+service DeviceService {
+
+    rpc AddDevice (Device) returns (Result) {}
+
+    rpc RemoveDevice (Device) returns (Result) {}
+
+    rpc GetDevice (DeviceId) returns (GetDeviceResp) {}
+}
+
+message DeviceId {
+    string id = 1;
+}
+
+message Device {
+    string id = 1;
+    string name = 2;
+    string comment = 3;
+}
+
+message Result {
+    int32 errorCode = 1;
+    string message = 2;
+}
+
+message GetDeviceResp {
+    Device device = 1;
+    Result result = 2;
+}

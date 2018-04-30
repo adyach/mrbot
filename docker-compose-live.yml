@@ -3,7 +3,6 @@ services:
   messenger:
     image: adyach/mrbot-messenger:0.8
     volumes:
-      - /tmp # for uwsgi socket used by nginx
       - /usr/local/messenger:/data/db
     environment:
       PAGE_ACCESS_TOKEN: ${PAGE_ACCESS_TOKEN}
@@ -20,8 +19,6 @@ services:
     ports:
      - "80:80"
      - "443:443"
-    volumes_from:
-     - messenger
     volumes:
      - /etc/letsencrypt:/etc/letsencrypt
      - /etc/ssl/certs:/etc/ssl/certs

@@ -7,7 +7,6 @@ services:
       rabbitmq:
         condition: service_healthy
     volumes:
-      - /tmp # for uwsgi socket used by nginx
       - /data/db
     environment:
       RABBITMQ_HOST: rabbitmq
@@ -24,8 +23,6 @@ services:
     ports:
      - "80:80"
      - "443:443"
-    volumes_from:
-     - messenger
 
   door-service:
     build:

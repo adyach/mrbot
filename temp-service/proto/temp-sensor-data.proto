@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package model;
+
+message TemperatureSensorData {
+    string timestamp = 1;
+    string deviceId = 2;
+    float humidity = 3;
+    float temperature = 4;
+    float heatIndex = 5;
+    int32 vcc = 6;
+}
