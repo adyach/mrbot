@@ -6,11 +6,12 @@ import uuid
 import pika
 
 import protobuf.door_sensor_data_pb2
+import protobuf.door_sensor_data_request_pb2
 import protobuf.temp_sensor_data_pb2
 
 _LOG = logging.getLogger('rpc.client')
-RABBITMQ_EXCHANGE = 'door.service'
-RABBITMQ_QUEUE = 'door.service.state'
+RABBITMQ_EXCHANGE = 'doors.events'
+RABBITMQ_QUEUE = 'doors.state.changed'
 
 
 class DoorSensorListener(object):
@@ -68,15 +69,16 @@ class RpcClient(object):
 
 
 class DoorRpcClient(RpcClient):
-    def get_state(self, door: str) -> protobuf.door_sensor_data_pb2.DoorSensorData:
-        self._call('doors', 'rpc-door-state', door)
+    def get_state(self, device_id: str) -> protobuf.door_sensor_data_pb2.DoorSensorData:
+        req = protobuf.door_sensor_data_request_pb2.DoorSensorDataRequest(device_id)
+        self._call('doors.rpc', 'rpc.doors.state', req.SerializeToString())
         door_sensor_data = protobuf.door_sensor_data_pb2.DoorSensorData()
         return door_sensor_data.ParseFromString(self.response)
 
 
 class TempRpcClient(RpcClient):
     def get_state(self, temp: str) -> protobuf.temp_sensor_data_pb2.TemperatureSensorData:
-        self._call('temps', 'rpc-temp-state', temp)
+        self._call('temps.rpc', 'rpc.temp.state', temp)
         temp_sensor_data = protobuf.temp_sensor_data_pb2.TemperatureSensorData()
         return temp_sensor_data.ParseFromString(self.response)
 

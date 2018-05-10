@@ -2,10 +2,15 @@ package org.crazycoder.door.service;
 
 import org.crazycoder.door.service.domain.DoorStatus;
 import org.crazycoder.door.service.domain.Heartbeat;
+import org.crazycoder.door.service.exception.DoorStatusException;
 import org.crazycoder.door.service.view.DoorStatusView;
 import org.crazycoder.door.service.view.HeartbeatView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 public class DoorController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DoorController.class);
 
     @Autowired
     private DoorService doorService;
@@ -79,4 +85,11 @@ public class DoorController {
         doorStatusView.setTime(Instant.ofEpochMilli(doorStatus.getTimestamp()).atZone(ZoneId.systemDefault()).toLocalDateTime());
         return doorStatusView;
     }
+
+    @ExceptionHandler(DoorStatusException.class)
+    private ResponseEntity doorStatusException(DoorStatusException dse) {
+        LOG.error(dse.getMessage(), dse);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(dse.getMessage());
+    }
+
 }

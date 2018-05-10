@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "org.crazycoder.door.service.protobuf";
+option java_multiple_files = true;
+
+import "door-sensor-data.proto";
+import "door-service-common-response.proto";
+
+message DoorSensorDataResponse {
+    DoorSensorData doorSensorData = 1;
+    Error error = 2;
+}

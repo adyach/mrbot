@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "org.crazycoder.door.service.protobuf";
+option java_multiple_files = true;
+
+message Error {
+    ErrorCode errorCode = 1;
+    string message = 2;
+}
+
+enum ErrorCode {
+    OK = 0;
+    INTERNAL_SERIVCE_ERROR = 1;
+}
