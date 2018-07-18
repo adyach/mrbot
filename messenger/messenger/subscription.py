@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-import client
+import rpc_client
 import db
 import protobuf
 from messenger_client import Messenger
@@ -62,5 +62,5 @@ class UserSubscription(object):
             return
 
         if not self.doorSensorListener:
-            self.doorSensorListener = client.DoorSensorListener(door_listener_callback())
+            self.doorSensorListener = rpc_client.DoorSensorListener(callback=door_listener_callback)
             self.doorSensorListener.run()

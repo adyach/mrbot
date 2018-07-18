@@ -33,9 +33,9 @@ public class DoorService {
     private DoorStatusRepository doorStatusRepository;
     @Autowired
     private RabbitTemplate rabbitTemplate;
-    @Value("${doors.state.changed}:doors.state.changed")
+    @Value("${doors.state.changed:doors.state.changed}")
     private String doorServiceQueue;
-    @Value("${doors.events}:doors.state.changed")
+    @Value("${doors.events:doors.state.changed}")
     private String doorsStatusExchange;
 
     @RabbitListener(queues = "rpc.doors.state")

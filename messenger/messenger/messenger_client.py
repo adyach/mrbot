@@ -8,6 +8,9 @@ _LOG = logging.getLogger('messenger.client')
 
 
 class Messenger(object):
+    def parse_message(self, data):
+        raise NotImplementedError()
+
     def send_message_to_user(self, user_id, text):
         raise NotImplementedError()
 

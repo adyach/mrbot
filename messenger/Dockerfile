@@ -1,4 +1,4 @@
-FROM python:3.5
+FROM python:3.7.0-alpine3.8
 
 MAINTAINER Andrey Dyachkov
 
@@ -12,4 +12,4 @@ COPY protobuf/ /usr/src/app/protobuf
 COPY requirements.txt /usr/src/app/
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD uwsgi --ini mrbot.ini
+CMD [ "python", "./app.py" ]

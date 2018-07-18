@@ -6,13 +6,14 @@ from flask import Flask, request
 from messenger_client import FacebookMessenger
 from router import Router
 from subscription import UserSubscription
+from db import FacebookUsersTinyDb
 
 logging.basicConfig(level=getattr(logging, 'INFO', None))
 _LOG = logging.getLogger('mrbot.http')
 
 app = Flask(__name__)
-user_subscription = UserSubscription()
 facebook_messenger = FacebookMessenger()
+user_subscription = UserSubscription(FacebookUsersTinyDb(), facebook_messenger)
 
 
 @app.route('/webhooks/facebook-messenger', methods=['GET'])

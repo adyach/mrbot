@@ -13,12 +13,12 @@ import org.springframework.context.annotation.Configuration;
 public class DoorStateRabbitConfig {
 
     @Bean
-    public Queue queue(@Value("${rpc.doors.queue}:rpc.doors.state") String queueName) {
+    public Queue queue(@Value("${rpc.doors.queue:rpc.doors.state}") String queueName) {
         return new Queue(queueName, false);
     }
 
     @Bean
-    public DirectExchange exchange(@Value("${rpc.doors.exchange}:rpc.doors") String exchangeName) {
+    public DirectExchange exchange(@Value("${rpc.doors.exchange:rpc.doors}") String exchangeName) {
         return new DirectExchange(exchangeName);
     }
 

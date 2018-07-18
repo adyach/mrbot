@@ -39,6 +39,8 @@ services:
      - door-service-mongo
      - messenger
      - rabbitmq
+    ports:
+     - "8080:8080"
 
   door-service-mongo:
     image: mongo:3.4.3
@@ -56,6 +58,8 @@ services:
     links:
      - messenger
      - temp-service-cassandra
+    ports:
+     - "8080:8080"
 
   temp-service-cassandra:
     # image: cassandra:3.10

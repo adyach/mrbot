@@ -43,11 +43,51 @@
          "arguments":{
 
          }
+      },
+      {
+         "name":"rpc.doors.state",
+         "vhost":"/",
+         "durable":false,
+         "auto_delete":false,
+         "arguments":{
+
+         }
+      },
+      {
+         "name":"doors.state.changed",
+         "vhost":"/",
+         "durable":false,
+         "auto_delete":false,
+         "arguments":{
+
+         }
       }
    ],
    "exchanges":[
       {
          "name":"door.service",
+         "vhost":"/",
+         "type":"topic",
+         "durable":false,
+         "auto_delete":false,
+         "internal":false,
+         "arguments":{
+
+         }
+      },
+      {
+         "name":"doors.events",
+         "vhost":"/",
+         "type":"fanout",
+         "durable":false,
+         "auto_delete":false,
+         "internal":false,
+         "arguments":{
+
+         }
+      },
+      {
+         "name":"doors.rpc",
          "vhost":"/",
          "type":"topic",
          "durable":false,
@@ -65,6 +105,26 @@
          "destination":"door.service.state",
          "destination_type":"queue",
          "routing_key":"",
+         "arguments":{
+
+         }
+      },
+      {
+         "source":"doors.events",
+         "vhost":"/",
+         "destination":"doors.state.changed",
+         "destination_type":"queue",
+         "routing_key":"",
+         "arguments":{
+
+         }
+      },
+      {
+         "source":"doors.rpc",
+         "vhost":"/",
+         "destination":"rpc.doors.state",
+         "destination_type":"queue",
+         "routing_key":"rpc.doors.state",
          "arguments":{
 
          }
